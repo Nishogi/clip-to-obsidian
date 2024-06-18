@@ -1,18 +1,19 @@
+// Import required libraries
 Promise.all([
     import('https://unpkg.com/turndown@6.0.0?module'),
     import('https://unpkg.com/@tehshrike/readability@0.2.0'),
 ]).then(async ([{ default: Turndown }, { default: Readability }]) => {
 
     /* Optional vault name */
-    const vault = "nicolas";
+    const vault = ""; // Name of the Obsidian vault
 
-    /* Optional folder name such as "Clippings/" */
-    const folder = "00_inbox/web/";
+    /* Optional folder name */
+    const folder = ""; // Folder path within the vault
 
-    /* Optional tags  */
-    let tags = "clippings";
+    /* Optional tags */
+    let tags = ""; // Tags for the note
 
-    /* Parse the site's meta keywords content into tags, if present */
+    // Parse the site's meta keywords content into tags, if present
     if (document.querySelector('meta[name="keywords" i]')) {
         var keywords = document.querySelector('meta[name="keywords" i]').getAttribute('content').split(',');
 
@@ -22,6 +23,7 @@ Promise.all([
         });
     }
 
+    // Function to get selected HTML content or the whole page if no selection
     function getSelectionHtml() {
         var html = "";
         if (typeof window.getSelection != "undefined") {
@@ -41,10 +43,12 @@ Promise.all([
         return html;
     }
 
-    const selection = getSelectionHtml();
+    const selection = getSelectionHtml(); // Get selected content
 
+    // Parse the webpage content using Readability
     const { title, byline, content } = new Readability(document.cloneNode(true)).parse();
 
+    // Function to generate a safe filename
     function getFileName(fileName) {
         var platform = window.navigator.platform;
         var windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'];
@@ -57,9 +61,9 @@ Promise.all([
         return fileName;
     }
 
-    const fileName = getFileName(title);
+    const fileName = getFileName(title); // Generate a safe filename
 
-    var markdownify = selection || content;
+    var markdownify = selection || content; // Use selected content or main content
 
     if (vault) {
         var vaultName = '&vault=' + encodeURIComponent(`${vault}`);
@@ -67,6 +71,7 @@ Promise.all([
         var vaultName = '';
     }
 
+    // Convert HTML content to Markdown using Turndown
     const markdownBody = new Turndown({
         headingStyle: 'atx',
         hr: '---',
@@ -77,6 +82,7 @@ Promise.all([
 
     var date = new Date();
 
+    // Function to convert date to YYYY-MM-DD format
     function convertDate(date) {
         var yyyy = date.getFullYear().toString();
         var mm = (date.getMonth() + 1).toString();
@@ -86,7 +92,7 @@ Promise.all([
         return yyyy + '-' + (mmChars[1] ? mm : "0" + mmChars[0]) + '-' + (ddChars[1] ? dd : "0" + ddChars[0]);
     }
 
-    const today = convertDate(date);
+    const today = convertDate(date); // Get today's date in YYYY-MM-DD format
 
     // Utility function to get meta content by name or property
     function getMetaContent(attr, value) {
@@ -100,9 +106,9 @@ Promise.all([
     // Check if there's an author and add brackets
     var authorBrackets = author ? `[[${author}]]` : "";
 
-    var locationLink = `[${fileName}](${document.location.href})`;
+    var locationLink = `[${fileName}](${document.location.href})`; // Create a link to the source
 
-    /* Try to get published date */
+    // Try to get published date
     var timeElement = document.querySelector("time");
     var publishedDate = timeElement ? timeElement.getAttribute("datetime") : "";
 
@@ -121,12 +127,13 @@ Promise.all([
         var published = '';
     }
 
-    /* YAML front matter as tags render cleaner with special chars  */
+    // Combine content and metadata into the final Markdown body
     const fileContent = markdownBody
         + "\n\nSource: " + document.location.href
         + "\nAuthor: " + authorBrackets
         + "\nDate: " + published + "\n";
 
+    // Create a new note in Obsidian with the file content
     document.location.href = "obsidian://new?"
         + "file=" + encodeURIComponent(folder + fileName)
         + "&content=" + encodeURIComponent(fileContent)
