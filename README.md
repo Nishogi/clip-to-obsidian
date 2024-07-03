@@ -1,73 +1,42 @@
-# Clip-to-Obsidian Chrome Extension Documentation
+# Chrome to Obsidian Clipper
 
-## Overview
+This project is a Chrome extension that allows you to clip web content and save it directly into Obsidian as a Markdown note.
 
-Clip-to-Obsidian is a Chrome extension that allows users to clip content from a webpage directly into their Obsidian vault. This extension converts the content into Markdown format and saves it with appropriate metadata.
+## Features
+
+- Clip the main content of any page.
+- Convert HTML content to Markdown using the Turndown library.
+- Extract and include metadata such as the title, author, publication date, and source URL.
+- Generate a safe and compatible filename for Obsidian by removing special characters.
 
 ## Installation
 
-### Prerequisites
-
-- Google Chrome browser
-- Obsidian application installed with a vault ready to use
-
-### Steps
-
-1. Clone or download the project repository.
-2. Open Google Chrome and navigate to `chrome://extensions/`.
-3. Enable "Developer mode" using the toggle switch in the top right corner.
-4. Click on "Load unpacked" and select the directory containing the extension files (manifest.json, bookmarklet.js, background.js, and icons).
+1. Clone this repository or download the necessary files.
+2. Open Chrome and go to `chrome://extensions/`.
+3. Enable `Developer mode` in the top right corner.
+4. Click `Load unpacked` and select the folder containing the extension files.
 
 ## Usage
 
-1. Navigate to the webpage you want to clip content from.
-2. Click on the Clip-to-Obsidian extension icon in the Chrome toolbar.
-3. The content of the page will be processed and converted to Markdown, then saved to your specified Obsidian vault.
+1. Open the web page you want to clip.
+2. Click on the extension icon in the Chrome toolbar.
+3. The content will be converted to Markdown and saved in Obsidian.
 
-## Project Files
+## How It Works
 
-### manifest.json
+When the extension icon is clicked, the script executes the following steps:
 
-Defines the extension's metadata and permissions.
+1. Injects the required libraries (`readability.js` and `turndown.js`) into the current tab.
+2. Runs a function to extract the main article content.
+3. Converts the extracted HTML content to Markdown.
+4. Constructs a Markdown note with the content and metadata (title, author, publication date, and source URL).
+5. Saves the note in Obsidian.
 
-### background.js
+## Libraries Used
 
-Listens for the extension icon click event and injects the `bookmarklet.js` script into the current tab.
+- [Readability.js](https://github.com/mozilla/readability) - Used to extract the main content of a web page.
+- [Turndown](https://github.com/domchristie/turndown) - Used to convert HTML content to Markdown.
 
-### bookmarklet.js
+## Contributing
 
-Processes the webpage content, converts it to Markdown, and triggers the creation of a new note in Obsidian.
-
-## Customization
-
-### Vault Name
-
-To change the vault where the content will be saved, update the `vault` variable in `bookmarklet.js`:
-
-```
-const vault = "your_vault_name";
-```
-
-### Folder Name
-
-To change the folder within the vault where the content will be saved, update the `folder` variable in `bookmarklet.js`:
-
-```
-const folder = "your_folder_name/";
-```
-
-### Tags
-
-Tags are automatically generated from the webpage's meta keywords. If you want to customize the tags, you can modify the `tags` variable and the logic inside `bookmarklet.js`:
-
-```
-let tags = "";
-```
-
-## License
-
-This project is licensed under the MIT License. See the LICENSE file for more information.
-
-## Support
-
-For any issues or questions, please contact the project maintainers or visit the homepage at [Obsidian](https://obsidian.md).
+Contributions are welcome! If you want to improve this project, please open an issue or submit a pull request.
