@@ -22,6 +22,28 @@ This project is a Chrome extension that allows you to clip web content and save 
 2. Click on the extension icon in the Chrome toolbar.
 3. The content will be converted to Markdown and saved in Obsidian.
 
+## Customization
+
+In the `background.js` file, you can specify your vault name (optionnal if you have only one vault) and the folder where the clipped content should be stored (by default, it is stored at root of your vault) :
+
+```js #11
+chrome.action.onClicked.addListener((tab) => {
+  chrome.scripting.executeScript(
+    {
+      target: { tabId: tab.id },
+      files: ["libs/readability.js", "libs/turndown.js"],
+    },
+    () => {
+      chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        func: clipToObsidian,
+        args: [{ vault: "your_vault_name", folder: "your_folder_name" }],
+      });
+    }
+  );
+});
+```
+
 ## How It Works
 
 When the extension icon is clicked, the script executes the following steps:
